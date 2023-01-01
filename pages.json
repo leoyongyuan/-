@@ -1,11 +1,49 @@
 {
-	"pages": [{
-		"path": "pages/index/index"
-	}],
+	"pages": [
+    {
+      "path": "pages/index/index"
+    },
+    {
+      "path" : "pages/video/video"
+    },
+    {
+      "path" : "pages/personal/personal"
+    },
+    {
+      "path" : "pages/login/login",
+      "style": {
+        "navigationBarTitleText": "登录中心"  
+      }
+    }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "网易云音乐",
 		"navigationBarBackgroundColor": "#d43c33",
 		"backgroundColor": "#F8F8F8"
-	}
+	},
+  "tabBar": {
+    "color": "#333",
+    "selectedColor": "#d43c33",
+    "backgroundColor": "#fff",
+  	"list": [{
+  			"pagePath": "pages/index/index",
+  			"text": "首页",
+        "iconPath": "static/images/tabs/tab-home.png",
+        "selectedIconPath": "static/images/tabs/tab-home-current.png"
+  		},
+      {
+      	"pagePath": "pages/video/video",
+      	"text": "视频",
+        "iconPath": "static/images/tabs/select.png",
+        "selectedIconPath": "static/images/tabs/selected.png"
+      },
+      {
+      	"pagePath": "pages/personal/personal",
+      	"text": "个人中心",
+        "iconPath": "static/images/tabs/tab-my.png",
+        "selectedIconPath": "static/images/tabs/tab-my-current.png"
+      }
+  	]
+  }
 }
