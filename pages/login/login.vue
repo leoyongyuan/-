@@ -9,14 +9,14 @@
         <view class="input-content">
           <view class="input-item">
             <text class="tit">手机号码</text>
-            <input  type="text" placeholder="请输入手机号码"/>
+            <input  type="text" placeholder="请输入手机号码" v-model="phone"/>
           </view>
           <view class="input-item">
             <text class="tit">密码</text>
-            <input type="password"  placeholder="请输入密码"/>
+            <input type="password"  placeholder="请输入密码" v-model="password"/>
           </view>
         </view>
-        <button class="confirm-btn" >登录</button>
+        <button class="confirm-btn" @click="login" >登录</button>
         <view class="forget-section">
           忘记密码?
         </view>
@@ -30,11 +30,66 @@
 </template>
 
 <script>
+  /**
+    作者: lyy
+    说明: 登录流程
+    1. 收集表单项数据
+    2. 前端验证
+      1) 验证用户信息(账号，密码)是否合法
+      2) 前端验证不通过就提示用户，不需要发请求给后端
+      3) 前端验证通过了，发请求(携带账号, 密码)给服务器端
+    3. 后端验证
+      1) 验证用户是否存在
+      2) 用户不存在直接返回，告诉前端用户不存在
+      3) 用户存在需要验证密码是否正确
+      4) 密码不正确返回给前端提示密码不正确
+      5) 密码正确返回给前端数据，提示用户登录成功(会携带用户的相关信息)
+  */
   export default {
     data() {
       return {
-        
+        phone: '',
+        password: '',
       };
+    },
+    
+    methods: {
+      async login() {
+        if (!this.phone) {
+          uni.$showMsg('手机号不能为空')
+          return;
+        }
+        // 定义正则
+        let phoneReg = /^1(3|4|5|6|7|8|9)\d{9}$/
+        if (!phoneReg.test(this.phone)) {
+          uni.$showMsg('手机号格式错误')
+          return;
+        }
+        
+        if (!this.password) {
+          uni.$showMsg('密码不能为空')
+          return;
+        }
+        const info = {
+          phone: this.phone,
+          password: this.password,
+        }
+      
+        const { data : res } = await uni.$http.get('/login/cellphone',info)
+        if (res.code === 200) {
+          uni.$showMsg('登录成功')
+          uni.setStorageSync('userInfo',JSON.stringify(res.profile))
+          uni.switchTab({
+            url: "/pages/personal/personal"
+          })
+        } else if (res.code === 400) {
+          uni.$showMsg('手机号错误')
+        } else if (res.code === 502) {
+          uni.$showMsg('密码错误')
+        } else {
+          uni.$showMsg(res.message)
+        }
+      },
     }
   }
 </script>

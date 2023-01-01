@@ -3,7 +3,7 @@
     <view class="personalContainer">
       <view class="user-section">
         <image class="bg" src="/static/images/personal/bgImg2.jpg"></image>
-        <view class="user-info-box">
+        <view class="user-info-box" @click="toLogin">
           <view class="portrait-box">
             <image class="portrait" src='/static/images/personal/missing-face.png'></image>
           </view>
@@ -91,7 +91,11 @@
         moveDistance: 0,
         coverTransform: 'translateY(0)',
         coverTransition: '',
+        userInfo: {},
       };
+    },
+    onLoad() {
+      this.userInfo = uni.getStorageSync('userInfo')
     },
     methods: {
       handleTouchStart(e) {
@@ -108,6 +112,11 @@
       handleTouchEnd() {
         this.coverTransform = `translateY(0rpx)`
         this.coverTransition = 'transform 0.5s linear'
+      },
+      toLogin() {
+        uni.navigateTo({
+          url: '/pages/login/login',
+        })
       },
     }
   }
