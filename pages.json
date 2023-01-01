@@ -4,7 +4,10 @@
       "path": "pages/index/index"
     },
     {
-      "path" : "pages/video/video"
+      "path" : "pages/video/video",
+      "style": {
+        "navigationBarTitleText": "视频页"  
+      }
     },
     {
       "path" : "pages/personal/personal"
