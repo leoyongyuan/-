@@ -117,7 +117,6 @@
           item.id = index ++;
           return item;
         })
-        console.log(this.recentPlayList)
       },
       handleTouchStart(e) {
         this.startY = e.changedTouches[0].clientY;

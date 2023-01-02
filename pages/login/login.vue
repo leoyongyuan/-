@@ -69,10 +69,13 @@
           password: this.password,
         }
       
-        const { data : res } = await uni.$http.get('/login',info)
+        const Data = await uni.$http.get('/login',info)
+        const res = Data.data
+        const cookies = Data.cookies
         if (res.code === 200) {
           uni.$showMsg('登录成功')
           uni.setStorageSync('userInfo',JSON.stringify(res.profile))
+          uni.setStorageSync('cookie',cookies)
           uni.switchTab({
             url: "/pages/personal/personal"
           })
