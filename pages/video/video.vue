@@ -39,6 +39,11 @@
         let { data : res } = await uni.$http.get('/video/group/list')
         this.videoGroupList = res.data.slice(0,14)
         this.navId = this.videoGroupList[0].id
+        this.getVideoList(this.navId)
+      },
+      async getVideoList(id) {
+        let { data : res } = await uni.$http.get('/video/group', { id })
+        console.log(res)
       },
     }
   }

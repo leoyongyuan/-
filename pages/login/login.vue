@@ -8,8 +8,8 @@
         </view>
         <view class="input-content">
           <view class="input-item">
-            <text class="tit">手机号码</text>
-            <input  type="text" placeholder="请输入手机号码" v-model="phone"/>
+            <text class="tit">邮箱号</text>
+            <input  type="text" placeholder="请输入邮箱" v-model="email"/>
           </view>
           <view class="input-item">
             <text class="tit">密码</text>
@@ -48,21 +48,15 @@
   export default {
     data() {
       return {
-        phone: '',
+        email: '',
         password: '',
       };
     },
     
     methods: {
       async login() {
-        if (!this.phone) {
-          uni.$showMsg('手机号不能为空')
-          return;
-        }
-        // 定义正则
-        let phoneReg = /^1(3|4|5|6|7|8|9)\d{9}$/
-        if (!phoneReg.test(this.phone)) {
-          uni.$showMsg('手机号格式错误')
+        if (!this.email) {
+          uni.$showMsg('邮箱不能为空')
           return;
         }
         
@@ -71,11 +65,11 @@
           return;
         }
         const info = {
-          phone: this.phone,
+          email: this.email,
           password: this.password,
         }
       
-        const { data : res } = await uni.$http.get('/login/cellphone',info)
+        const { data : res } = await uni.$http.get('/login',info)
         if (res.code === 200) {
           uni.$showMsg('登录成功')
           uni.setStorageSync('userInfo',JSON.stringify(res.profile))

@@ -5,10 +5,11 @@
         <image class="bg" src="/static/images/personal/bgImg2.jpg"></image>
         <view class="user-info-box" @click="toLogin">
           <view class="portrait-box">
-            <image class="portrait" src='/static/images/personal/missing-face.png'></image>
+            <image class="portrait" 
+            :src="userInfo.avatarUrl ? userInfo.avatarUrl : '/static/images/personal/missing-face.png'"></image>
           </view>
           <view class="info-box">
-            <text class="username">游客</text>
+            <text class="username">{{userInfo.nickname ?userInfo.nickname : '游客'}}</text>
           </view>
         </view>
     
@@ -60,6 +61,12 @@
           <view class="recentPlayContainer">
             <text class="title">最近播放</text>
             <!-- 最近播放记录 -->
+            <scroll-view v-if="recentPlayList.length" scroll-x class="recentScroll" enable-flex>
+              <view class="recentItem" v-for="(item,i) in recentPlayList" :key="item.id">
+                <image :src="item.song.al.picUrl"></image>
+              </view>
+            </scroll-view>
+            <view v-else>暂无播放记录</view>
           </view>
     
           <view class="cardList">
@@ -92,12 +99,26 @@
         coverTransform: 'translateY(0)',
         coverTransition: '',
         userInfo: {},
+        recentPlayList: [], // 用户播放记录 
       };
     },
     onLoad() {
       this.userInfo = uni.getStorageSync('userInfo')
+      if (this.userInfo) {
+        this.userInfo = JSON.parse(this.userInfo)
+        this.getUserRecentPlayList(this.userInfo.userId)
+      }
     },
     methods: {
+      async getUserRecentPlayList(userId) {
+        let { data : res } = await uni.$http.get('/user/record', { uid: userId, type: 0})
+        let index = 0;
+        this.recentPlayList = res.allData.splice(0,10).map(item => {
+          item.id = index ++;
+          return item;
+        })
+        console.log(this.recentPlayList)
+      },
       handleTouchStart(e) {
         this.startY = e.changedTouches[0].clientY;
         this.coverTransition = ''
@@ -335,5 +356,17 @@
 }
 .cardList .card-item .more {
   float: right;
+}
+
+// 播放记录
+.recentScroll {
+  display: flex;
+  height: 200rpx;
+  .recentItem image {
+    width: 200rpx;
+    height: 200rpx;
+    border-radius: 10rpx;
+    margin: 10rpx;
+  }
 }
 </style>
