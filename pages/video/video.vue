@@ -52,7 +52,7 @@
                 <text class="count">{{item.data.commentCount}}</text>
               </text>
               <button open-type="share" class="item btn">
-                <text class="iconfont icon-gengduo"></text>
+                <text class="iconfont icon-more"></text>
               </button>
             </view>
           </view>
@@ -79,6 +79,21 @@
     onLoad() {
       // 获取导航数据
       this.getVideoGroupList()
+    },
+    onShareAppMessage({from}) {
+      console.log(from)
+      if (from === 'button') {
+        return {
+          title: '来自button的转发',
+          path: '/pages/video/video',
+          imageUrl: '/static/images/nvsheng.jpg'
+        }
+      }
+      return {
+        title: '来自menu的转发',
+        path: '/pages/video/video',
+        imageUrl: '/static/images/nvsheng.jpg'
+      }
     },
     methods: {
       async getVideoGroupList() {
@@ -115,6 +130,7 @@
           },1000)
         }
       },
+      
     }
   }
 </script>
