@@ -23,7 +23,12 @@
       </scroll-view>
       
       <!-- 视频列表区域 -->
-      <scroll-view scroll-y class="videoScroll" refresher-enabled>
+      <scroll-view 
+        scroll-y 
+        class="videoScroll" 
+        refresher-enabled
+        :refresher-triggered="isTriggered"
+        @refresherrefresh="handleRefresher">
         <view class="videoItem" v-for="(item,i) in videoList" :key="i">
           <video :src="item.data.urlInfo" 
           @play="handlePlay(item.data.vid)" 
@@ -68,6 +73,7 @@
         videoContext: '',
         vid: '',
         videoId: '',
+        isTriggered: false, // 标识下拉刷新是否被触发
       };
     },
     onLoad() {
@@ -98,6 +104,16 @@
         this.vid = this.videoId = vid
         this.videoContext = uni.createVideoContext(vid)
         this.videoContext.play()
+      },
+      // 自定义下拉刷新
+      handleRefresher() {
+        if (!this.isTriggered) {
+          this.isTriggered = true
+          this.getVideoList(this.navId)
+          setTimeout(() => {
+            this.isTriggered = false
+          },1000)
+        }
       },
     }
   }
