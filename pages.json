@@ -17,6 +17,16 @@
       "style": {
         "navigationBarTitleText": "登录中心"  
       }
+    },
+    {
+       "path" : "pages/recommendSong/recommendSong",
+       "style": {
+          "navigationBarTitleText": "每日推荐",
+          "navigationBarBackgroundColor": "#91CDF6"
+       }
+    },
+    {
+        "path" : "pages/songDetail/songDetail"
     }
     ],
 	"globalStyle": {

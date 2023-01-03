@@ -15,7 +15,7 @@
         scroll-x class="navScroll" enable-flex scroll-with-animation>
         <view class="navItem" v-for="(item,i) in videoGroupList" :key="item.id" 
           :id="'scroll' + item.id">
-          <view :class="[navContent,navId === item.id ? 'active' : '']" 
+          <view :class="['navContent',navId === item.id ? 'active' : '']" 
             @click="changeNav(item.id)">
             {{item.name}}
           </view>

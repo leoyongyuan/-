@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3846597 */
-  src: url('//at.alicdn.com/t/c/font_3846597_1mxlfi3q5ho.woff2?t=1672734145296') format('woff2'),
-       url('//at.alicdn.com/t/c/font_3846597_1mxlfi3q5ho.woff?t=1672734145296') format('woff'),
-       url('//at.alicdn.com/t/c/font_3846597_1mxlfi3q5ho.ttf?t=1672734145296') format('truetype');
+  src: url('//at.alicdn.com/t/c/font_3846597_a86jz4zuzpf.woff2?t=1672759362815') format('woff2'),
+       url('//at.alicdn.com/t/c/font_3846597_a86jz4zuzpf.woff?t=1672759362815') format('woff'),
+       url('//at.alicdn.com/t/c/font_3846597_a86jz4zuzpf.ttf?t=1672759362815') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,30 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-playlistplay:before {
+  content: "\ecb0";
+}
+
+.icon-icon-:before {
+  content: "\e648";
+}
+
+.icon-icon-1:before {
+  content: "\e649";
+}
+
+.icon-kaishi:before {
+  content: "\e657";
+}
+
+.icon-zanting:before {
+  content: "\e662";
+}
+
+.icon-suijibofang:before {
+  content: "\f1f8";
 }
 
 .icon-more:before {

@@ -8,10 +8,10 @@ const baseUrl = 'http://localhost:3000'
  // options.header = {
 //      "Content-Type": "application/x-www-form-urlencoded"
 // }
-    // const cookie = uni.getStorageSync('cookie').find(item => item.indexOf('MUSIC_U') !== -1)
-    // options.header = {
-    //   "cookie": cookie ? cookie : '',
-    // }
+    const cookie = uni.getStorageSync('cookie').find(item => item.indexOf('MUSIC_U') !== -1)
+    options.header = {
+      "cookie": cookie ? cookie : '',
+    }
     return new Promise((resolve, reject) => {
         uni.request({
             url: baseUrl + options.url || '',
