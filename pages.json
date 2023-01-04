@@ -29,6 +29,7 @@
         "path" : "pages/songDetail/songDetail"
     }
     ],
+  "requiredBackgroundModes": ["audio"],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "网易云音乐",

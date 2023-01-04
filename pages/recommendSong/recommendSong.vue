@@ -17,7 +17,8 @@
         </view>
         <!-- 内容区 -->
         <scroll-view scroll-y class="listScroll" >
-          <view class="scrollItem" v-for="(item,i) in recommendList" :key="item.id">
+          <view class="scrollItem" v-for="(item,i) in recommendList" :key="item.id" 
+          @click="toSongDetail(item.id)">
             <image :src="item.al.picUrl"></image>
             <view class="musicInfo">
               <text class="musicName">{{item.name}}</text>
@@ -31,6 +32,7 @@
 </template>
 
 <script>
+  import { mapMutations } from 'vuex'
   export default {
     data() {
       return {
@@ -50,11 +52,18 @@
       this.getRecommendList()
     },
     methods: {
+      ...mapMutations(['updateMusicList']),
       // 获取用户每日推荐的数据
       async getRecommendList() {
         const { data : res } = await uni.$http.get('/recommend/songs')
         this.recommendList = res.data.dailySongs
-      }
+        this.updateMusicList(this.recommendList)
+      },
+      toSongDetail(songId) {
+        uni.navigateTo({
+          url: '/pages/songDetail/songDetail?songId=' + songId
+        })
+      },
     }
   }
 </script>

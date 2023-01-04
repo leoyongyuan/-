@@ -1,23 +1,22 @@
 <template>
   <view class="container">
     <view class="songDeatilContainer">
-     <view class="author">beyond</view>
+     <view class="author">{{song.name}}</view>
       <view class="circle"></view>
      <image src="/static/images/song/needle.png"
       :class="['needle', isPlay && 'needleRotate']"></image>
       <view class="discContainer">
         <image src="/static/images/song/disc.png" class="disc"></image>
-        <image src="/static/images/nvsheng.jpg" mode=""
+        <image :src="song.al.picUrl" mode=""
         :class="['musicImg',isPlay && 'discAnimation']"></image>
       </view>
-      
       <!-- 底部控制器 -->
       <view class="musicControl">
         <text class="iconfont icon-suijibofang"></text>
-        <text class="iconfont icon-icon-1"></text>
+        <text class="iconfont icon-icon-1" @click="handleSwitch('pre')"></text>
         <text :class="['iconfont',isPlay ?'icon-zanting' :'icon-kaishi','big']"
         @click="handleMusicPlay"></text>
-        <text class="iconfont icon-icon-"></text>
+        <text class="iconfont icon-icon-" @click="handleSwitch('next')"></text>
         <text class="iconfont icon-playlistplay"></text>
       </view>
     </view>
@@ -25,16 +24,91 @@
 </template>
 
 <script>
+  import { mapState, mapGetters } from 'vuex'
   export default {
     data() {
       return {
         isPlay: false, // 音乐是否播放
+        songId: '',
+        song: {},
+        backGroundAudioManager: uni.getBackgroundAudioManager()
       };
+    },
+    computed: {
+      ...mapState(['musicList','isMusicPlay','musicId']),
+    },
+    onLoad(options) {
+      this.songId = options.songId
+      this.getMusicInfo(this.songId)
+      
+      // 判断当前页面是否在播放
+      if (this.isMusicPlay && this.musicId === this.songId) {
+        this.isPlay = true
+      }
+      
+      /*
+       * 使操作系统音乐播放/暂停和isPlay同步
+       * */
+       this.backGroundAudioManager.onPlay(() => {
+          this.isPlay = true
+          
+          // 修改全局音乐状态
+          this.$store.commit('updateMusicState', { isPlay: true, musicId: this.songId })
+       })
+       this.backGroundAudioManager.onPause(() => {
+          this.isPlay = false
+          
+          // 修改全局音乐状态
+         this.$store.commit('updateMusicState', { isPlay: false, musicId: this.songId })
+       })
+       this.backGroundAudioManager.onStop(() => {
+          this.isPlay = false
+          
+          // 修改全局音乐状态
+          this.$store.commit('updateMusicState', { isPlay: false, musicId: this.songId })
+       })
     },
     methods: {
       // 点击播放/暂停
       handleMusicPlay() {
         this.isPlay = !this.isPlay
+        this.musicControl()
+      },
+      //获取音乐详情
+       async getMusicInfo(songId) {
+         this.songId = songId
+         const { data : res } = await uni.$http.get('/song/detail',{ ids: songId })
+         const arr = res.songs
+         this.song = arr[0]
+         this.$store.commit('updateMusicState', { isPlay: true, musicId: this.songId })
+         this.musicControl()
+       },
+       
+      // 控制音乐播放的功能
+      async musicControl() {
+        if (this.isPlay) {
+          // 创建音频实例
+          const songId = this.songId
+          const { data : res } = await uni.$http.get('/song/url', { id: songId  })
+          const arr = res.data
+          const musicUrl = arr[0].url
+          this.backGroundAudioManager.src = musicUrl
+          this.backGroundAudioManager.title = this.song.name
+        } else {
+          this.backGroundAudioManager.pause()
+        }
+      },
+      
+      // 切换歌曲
+      handleSwitch(type) {
+        const n = this.musicList.length
+        let idx = this.musicList.findIndex(item => item.id === this.songId)
+        if (type === 'pre') {
+          idx = ((idx - 1) % n + n) % n
+        } else {
+          idx = ((idx + 1) % n + n) % n
+        } 
+        this.getMusicInfo(this.musicList[idx].id)
       }
     }
   }
