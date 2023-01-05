@@ -27,6 +27,12 @@
     },
     {
         "path" : "pages/songDetail/songDetail"
+    },
+    {
+        "path" : "pages/search/search",
+        "style": {
+           "navigationBarTitleText": "搜索音乐"
+        }
     }
     ],
   "requiredBackgroundModes": ["audio"],
