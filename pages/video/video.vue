@@ -4,8 +4,8 @@
       <!-- 头部区域 -->
       <view class="header">
         <image src="/static/images/video/video.jpg"></image>
-        <view class="search">
-          搜索商品
+        <view class="search" @click="toSearch">
+          搜索音乐
         </view>
         <image src="/static/images/logo.png"></image>
       </view>
@@ -96,6 +96,11 @@
       }
     },
     methods: {
+      toSearch() {
+        uni.navigateTo({
+          url:'/pages/search/search'
+        })
+      },
       async getVideoGroupList() {
         let { data : res } = await uni.$http.get('/video/group/list')
         this.videoGroupList = res.data.slice(0,14)
