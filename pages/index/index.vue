@@ -8,7 +8,7 @@
     </swiper>
      <!-- 图表导航区域 -->
     <view class="navContainer">
-      <view class="navItem">
+      <view class="navItem" @click="toRecommendSong">
         <text class="iconfont icon-tuijian"></text>
         <text >每日推荐</text>
        </view>
@@ -70,6 +70,12 @@
       this.getTopList()
     },
 		methods: {
+      // 跳转到每日推荐页面
+      toRecommendSong() {
+        uni.navigateTo({
+          url: '/pages/recommendSong/recommendSong'
+        })
+      },
       async getBannerList() {
         const res = await uni.$http.get('/banner',{ type: 2 })
         this.bannerList = res.data.banners

@@ -10,6 +10,16 @@
         <image :src="song.al.picUrl" mode=""
         :class="['musicImg',isPlay && 'discAnimation']"></image>
       </view>
+      <!-- 进度条 -->
+      <view class="progressControl">
+        <text>{{currentTime}}</text>
+        <view class="barControl">
+          <view class="audio-currentTime-Bar" :style="{width: currentWidth + 'rpx'}"> 
+            <view class="audio-circle"></view>
+          </view>
+        </view>
+        <text>{{durationTime}}</text>
+      </view>
       <!-- 底部控制器 -->
       <view class="musicControl">
         <text class="iconfont icon-suijibofang"></text>
@@ -25,13 +35,18 @@
 
 <script>
   import { mapState, mapGetters } from 'vuex'
+  import moment from 'moment'
   export default {
     data() {
       return {
         isPlay: false, // 音乐是否播放
         songId: '',
         song: {},
-        backGroundAudioManager: uni.getBackgroundAudioManager()
+        backGroundAudioManager: uni.getBackgroundAudioManager(),
+        musicUrlTemp: '',
+        durationTime: '00:00',
+        currentTime: '00:00',
+        currentWidth: 0, // 实时进度条宽度
       };
     },
     computed: {
@@ -50,29 +65,37 @@
        * 使操作系统音乐播放/暂停和isPlay同步
        * */
        this.backGroundAudioManager.onPlay(() => {
-          this.isPlay = true
-          
-          // 修改全局音乐状态
-          this.$store.commit('updateMusicState', { isPlay: true, musicId: this.songId })
+         this.changeMusicState(true)
        })
        this.backGroundAudioManager.onPause(() => {
-          this.isPlay = false
-          
-          // 修改全局音乐状态
-         this.$store.commit('updateMusicState', { isPlay: false, musicId: this.songId })
+         this.changeMusicState(false)
        })
        this.backGroundAudioManager.onStop(() => {
-          this.isPlay = false
-          
-          // 修改全局音乐状态
-          this.$store.commit('updateMusicState', { isPlay: false, musicId: this.songId })
+          this.changeMusicState(false)
+       })
+       /*监听音乐实时播放*/
+       this.backGroundAudioManager.onTimeUpdate(() => {
+         this.currentTime = moment(this.backGroundAudioManager.currentTime * 1000).format('mm:ss')
+         this.currentWidth = this.backGroundAudioManager.currentTime / this.backGroundAudioManager.duration * 450;
+       })
+       
+       // 监听音乐播放自然结束，自动切换下一首
+       this.backGroundAudioManager.onEnded(() => {
+         this.handleSwitch('next')
+         this.currentWidth = 0
+         this.currentTime = '00:00'
        })
     },
     methods: {
+      changeMusicState(flag) {
+        this.isPlay = flag
+        // 修改全局音乐状态
+        this.$store.commit('updateMusicState', { isPlay: flag, musicId: this.songId })
+      },
       // 点击播放/暂停
       handleMusicPlay() {
         this.isPlay = !this.isPlay
-        this.musicControl()
+        this.musicControl(this.musicUrlTemp)
       },
       //获取音乐详情
        async getMusicInfo(songId) {
@@ -80,18 +103,20 @@
          const { data : res } = await uni.$http.get('/song/detail',{ ids: songId })
          const arr = res.songs
          this.song = arr[0]
+         this.durationTime = moment(arr[0].dt).format('mm:ss')
          this.$store.commit('updateMusicState', { isPlay: true, musicId: this.songId })
-         this.musicControl()
        },
        
       // 控制音乐播放的功能
-      async musicControl() {
+      async musicControl(musicUrl) {
         if (this.isPlay) {
           // 创建音频实例
-          const songId = this.songId
-          const { data : res } = await uni.$http.get('/song/url', { id: songId  })
-          const arr = res.data
-          const musicUrl = arr[0].url
+          if (!musicUrl) {
+            const songId = this.songId
+            const { data : res } = await uni.$http.get('/song/url', { id: songId  })
+            const arr = res.data
+            this.musicUrlTemp = musicUrl = arr[0].url
+          }
           this.backGroundAudioManager.src = musicUrl
           this.backGroundAudioManager.title = this.song.name
         } else {
@@ -109,6 +134,7 @@
           idx = ((idx + 1) % n + n) % n
         } 
         this.getMusicInfo(this.musicList[idx].id)
+        this.musicControl()
       }
     }
   }
@@ -216,6 +242,42 @@ page {
   }
   .big {
     font-size: 80rpx;
+  }
+}
+
+// 进度条控制器
+.progressControl {
+  position: absolute;
+  bottom: 200rpx;
+  width: 640rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  display: flex;
+  .barControl {
+    position: relative;
+    width: 450rpx;
+    height: 4rpx;
+    background: rgba(0, 0, 0, 0.4);
+    margin: auto;
+    .audio-currentTime-Bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100rpx;
+      z-index: 1;
+      height: 4rpx;
+      background-color: red;
+      .audio-circle {
+        position: absolute;
+        right: -12rpx;
+        top: -4rpx;
+        width : 12rpx;
+        height: 12rpx;
+        border-radius: 50%;
+        background-color: #fff;
+        
+      }
+    }
   }
 }
 </style>

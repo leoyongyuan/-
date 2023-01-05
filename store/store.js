@@ -20,9 +20,6 @@ const store = new Vuex.Store({
     },
   },
   getters: {
-    getMusicIndex(state) {
-     return state.musicList.findIndex(item => item.id === state.musicId)
-    }
   },
   modules: {
     
